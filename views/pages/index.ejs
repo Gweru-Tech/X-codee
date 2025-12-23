@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-code text-purple-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">X-Coder</span>
+                    </a>
+                    
+                    <div class="hidden md:flex ml-10 space-x-8">
+                        <a href="/" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition">Home</a>
+                        <a href="/service" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition">Services</a>
+                        <a href="/dashboard" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition">Dashboard</a>
+                        <a href="/pricing" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition">Pricing</a>
+                        <a href="/about" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition">About</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <% if (user) { %>
+                        <!-- User Menu -->
+                        <div class="relative">
+                            <button onclick="toggleUserMenu()" class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                <img class="h-8 w-8 rounded-full" src="<%= user.profile.avatar || 'https://ui-avatars.com/api/?name=' + user.username + '&background=667eea&color=fff' %>" alt="<%= user.username %>">
+                                <span class="ml-2 text-gray-700 font-medium"><%= user.username %></span>
+                                <i class="fas fa-chevron-down ml-2 text-gray-500"></i>
+                            </button>
+                            
+                            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                <div class="py-1">
+                                    <a href="/user/dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">
+                                        <i class="fas fa-dashboard mr-2"></i> Dashboard
+                                    </a>
+                                    <a href="/user/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">
+                                        <i class="fas fa-user mr-2"></i> Profile
+                                    </a>
+                                    <a href="/user/projects" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">
+                                        <i class="fas fa-folder mr-2"></i> My Projects
+                                    </a>
+                                    <% if (user.role === 'admin') { %>
+                                    <a href="/admin" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">
+                                        <i class="fas fa-cog mr-2"></i> Admin Panel
+                                    </a>
+                                    <% } %>
+                                    <a href="/user/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">
+                                        <i class="fas fa-gear mr-2"></i> Settings
+                                    </a>
+                                    <hr class="my-1">
+                                    <a href="/auth/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50">
+                                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <!-- Auth Buttons -->
+                        <a href="/auth/login" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium transition">Login</a>
+                        <a href="/auth/register" class="btn-primary text-white px-4 py-2 rounded-md text-sm font-medium">Get Started</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-float">
+                    Build, Deploy & Manage
+                    <span class="block text-yellow-300">Your Digital Empire</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-purple-100">
+                    Complete web development platform with design, hosting, automation, and deployment services
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/auth/register" class="btn-primary text-white px-8 py-4 rounded-lg text-lg font-semibold inline-flex items-center justify-center">
+                        <i class="fas fa-rocket mr-2"></i>
+                        Start Free Trial
+                    </a>
+                    <a href="#features" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition inline-flex items-center justify-center">
+                        <i class="fas fa-play-circle mr-2"></i>
+                        View Demo
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hero Image -->
+            <div class="mt-16 relative">
+                <div class="bg-white rounded-xl shadow-2xl p-8 max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="bg-purple-100 rounded-lg p-4 mb-4">
+                                <i class="fas fa-code text-purple-600 text-3xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">Web Development</h3>
+                            <p class="text-gray-600 text-sm">Professional HTML/CSS/JS</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="bg-blue-100 rounded-lg p-4 mb-4">
+                                <i class="fas fa-paint-brush text-blue-600 text-3xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">Design Services</h3>
+                            <p class="text-gray-600 text-sm">Logos, Banners & Cards</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="bg-green-100 rounded-lg p-4 mb-4">
+                                <i class="fas fa-server text-green-600 text-3xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-800">Cloud Hosting</h3>
+                            <p class="text-gray-600 text-sm">Fast & Reliable Deploy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Everything You Need to Succeed
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Professional tools and services to help you build amazing digital experiences
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Web Development -->
+                <div class="card-hover bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="bg-purple-100 rounded-lg p-3 w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-laptop-code text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Web Development</h3>
+                    <p class="text-gray-600 mb-6">
+                        Create stunning websites with HTML, CSS, and JavaScript. Modern frameworks and responsive design included.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Responsive Design</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Modern Frameworks</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>SEO Optimized</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Fast Loading</li>
+                    </ul>
+                </div>
+
+                <!-- Design Services -->
+                <div class="card-hover bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="bg-blue-100 rounded-lg p-3 w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-palette text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Design Services</h3>
+                    <p class="text-gray-600 mb-6">
+                        Professional design services including logos, business cards, banners, and brand identity packages.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Logo Design</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Business Cards</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Banner Creation</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Brand Identity</li>
+                    </ul>
+                </div>
+
+                <!-- Web Hosting -->
+                <div class="card-hover bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="bg-green-100 rounded-lg p-3 w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-cloud text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Web Hosting</h3>
+                    <p class="text-gray-600 mb-6">
+                        Reliable cloud hosting with automatic deployment, SSL certificates, and 99.9% uptime guarantee.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Auto Deployment</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>SSL Included</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>99.9% Uptime</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>CDN Ready</li>
+                    </ul>
+                </div>
+
+                <!-- WhatsApp Automation -->
+                <div class="card-hover bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="bg-green-100 rounded-lg p-3 w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fab fa-whatsapp text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">WhatsApp Bots</h3>
+                    <p class="text-gray-600 mb-6">
+                        Build and deploy WhatsApp chatbots for customer service, marketing, and automation tasks.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Chatbot Builder</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Auto Responses</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Analytics</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Multi-language</li>
+                    </ul>
+                </div>
+
+                <!-- File Management -->
+                <div class="card-hover bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="bg-orange-100 rounded-lg p-3 w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-folder text-orange-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">File Management</h3>
+                    <p class="text-gray-600 mb-6">
+                        Upload, organize, and manage all your project files with our advanced file management system.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Drag & Drop</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Version Control</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Cloud Storage</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>File Sharing</li>
+                    </ul>
+                </div>
+
+                <!-- Analytics -->
+                <div class="card-hover bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <div class="bg-red-100 rounded-lg p-3 w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Analytics & Insights</h3>
+                    <p class="text-gray-600 mb-6">
+                        Track performance, monitor uptime, and get insights about your projects with detailed analytics.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Real-time Stats</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Performance Tracking</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Custom Reports</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Alerts & Notifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 gradient-bg text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl md:text-5xl font-bold mb-2">10,000+</div>
+                    <div class="text-purple-200">Projects Deployed</div>
+                </div>
+                <div>
+                    <div class="text-4xl md:text-5xl font-bold mb-2">5,000+</div>
+                    <div class="text-purple-200">Active Users</div>
+                </div>
+                <div>
+                    <div class="text-4xl md:text-5xl font-bold mb-2">99.9%</div>
+                    <div class="text-purple-200">Uptime</div>
+                </div>
+                <div>
+                    <div class="text-4xl md:text-5xl font-bold mb-2">24/7</div>
+                    <div class="text-purple-200">Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Choose Your Plan
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Flexible pricing plans for individuals and teams
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Plan -->
+                <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Free</h3>
+                    <div class="text-3xl font-bold text-gray-900 mb-6">$0<span class="text-lg font-normal text-gray-600">/month</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>1 Project</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>1GB Storage</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Basic Analytics</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Community Support</span>
+                        </li>
+                    </ul>
+                    <a href="/auth/register" class="w-full bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition text-center block">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="bg-purple-600 text-white rounded-xl shadow-lg p-8 border-2 border-purple-600 transform scale-105">
+                    <div class="bg-yellow-400 text-purple-900 text-sm font-semibold px-3 py-1 rounded-full inline-block mb-4">
+                        MOST POPULAR
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Pro</h3>
+                    <div class="text-3xl font-bold mb-6">$29<span class="text-lg font-normal opacity-80">/month</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-400 mr-3"></i>
+                            <span>Unlimited Projects</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-400 mr-3"></i>
+                            <span>50GB Storage</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-400 mr-3"></i>
+                            <span>Advanced Analytics</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-400 mr-3"></i>
+                            <span>Priority Support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-yellow-400 mr-3"></i>
+                            <span>Custom Domain</span>
+                        </li>
+                    </ul>
+                    <a href="/auth/register" class="w-full bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition text-center block">
+                        Start Free Trial
+                    </a>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Enterprise</h3>
+                    <div class="text-3xl font-bold text-gray-900 mb-6">$99<span class="text-lg font-normal text-gray-600">/month</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Everything in Pro</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Unlimited Storage</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Team Collaboration</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>24/7 Phone Support</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>SLA Guarantee</span>
+                        </li>
+                    </ul>
+                    <a href="/contact" class="w-full btn-primary text-white px-6 py-3 rounded-lg font-semibold text-center block">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                Ready to Build Something Amazing?
+            </h2>
+            <p class="text-xl mb-8 text-purple-100">
+                Join thousands of developers and businesses using X-Coder Platform
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/auth/register" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition inline-flex items-center justify-center">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Start Free Trial
+                </a>
+                <a href="/demo" class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-purple-600 transition inline-flex items-center justify-center">
+                    <i class="fas fa-play-circle mr-2"></i>
+                    Watch Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-code text-purple-400 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold">X-Coder Platform</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Your comprehensive platform for web development, design, and deployment services.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-purple-400 transition">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400 transition">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400 transition">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400 transition">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/service" class="text-gray-400 hover:text-purple-400 transition">Services</a></li>
+                        <li><a href="/pricing" class="text-gray-400 hover:text-purple-400 transition">Pricing</a></li>
+                        <li><a href="/about" class="text-gray-400 hover:text-purple-400 transition">About</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-purple-400 transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/docs" class="text-gray-400 hover:text-purple-400 transition">Documentation</a></li>
+                        <li><a href="/help" class="text-gray-400 hover:text-purple-400 transition">Help Center</a></li>
+                        <li><a href="/privacy" class="text-gray-400 hover:text-purple-400 transition">Privacy Policy</a></li>
+                        <li><a href="/terms" class="text-gray-400 hover:text-purple-400 transition">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 X-Coder Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Close user menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('userMenu');
+            const userMenuButton = event.target.closest('button[onclick="toggleUserMenu()"]');
+            
+            if (!userMenuButton && !userMenu.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
