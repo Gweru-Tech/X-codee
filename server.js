@@ -92,6 +92,16 @@ app.use('/service', serviceRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/deploy', deploymentRoutes);
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Main routes
 app.get('/', (req, res) => {
   res.render('pages/index', { 
